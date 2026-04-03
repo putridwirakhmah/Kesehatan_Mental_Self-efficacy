@@ -113,60 +113,70 @@
                     </div>
                 </div>
 
-                {{-- TOP FEATURE --}}
+                {{-- RINCIAN SKOR --}}
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">
-                        Faktor Paling Berpengaruh
+                        Rincian Skor
                     </h3>
-                    <div class="flex items-end justify-center gap-4" style="height: 256px;">
-                        @if(isset($result->prediction_data['top_features']))
-                        @php
-                        $maxValue = max($result->prediction_data['top_features']);
-                        @endphp
-
-                        @foreach($result->prediction_data['top_features'] as $key => $value)
-
+                    <div class="overflow-x-auto">
+                        <div class="flex items-end justify-center gap-2" style="min-width: 400px; height: 256px;">
+                            @if(isset($result->prediction_data['scores']))
                             @php
-                                $isSE = str_contains($key, 'SE');
+                                $subscales = $result->prediction_data['scores']['subscales'] ?? [];
+                                $se_avg = $result->prediction_data['scores']['self_efficacy']['average'] ?? 0;
 
-                                $max = $isSE ? 4 : 21;
-                                $value = (float) $value;
-                                $height = max(($value / $maxValue) * 120, 8);
+                                // gabungkan data
+                                $all_scores = $subscales;
+                                $all_scores['Self_Efficacy'] = $se_avg;
 
-                                // warna beda biar kelihatan
-                                $color = $isSE ? 'bg-blue-500' : 'bg-green-500';
-
-                                $label = match($key) {
-                                    'Autonomy' => 'Auto',
-                                    'Environmental_Mastery' => 'Env',
-                                    'Personal_Growth' => 'Growth',
-                                    'Positive_Relations' => 'Relation',
-                                    'Purpose_in_Life' => 'Purpose',
-                                    'Self_Acceptance' => 'Accept',
-                                    default => $key
-                                };
+                                $maxValue = max($all_scores);
                             @endphp
 
-                            <div class="flex flex-col items-center">
-                                {{-- VALUE --}}
-                                <span class="text-xs font-bold">{{ $value }}</span>
-                                {{-- BAR --}}
-                                <div 
-                                    style="
-                                        width:50px;
-                                        height: {{ $height }}px;
-                                        background: {{ $color === 'bg-blue-500' ? '#3b82f6' : '#10b981' }};
-                                        border-radius: 6px 6px 0 0;
-                                        transition: 0.5s;
-                                    ">
+                            @foreach($all_scores as $key => $value)
+
+                                @php
+                                    $isSE = $key === 'Self_Efficacy';
+
+                                    // normalisasi tinggi bar
+                                    $max = $isSE ? 4 : 21;
+                                    $height = max(($value / $maxValue) * 120, 10);
+
+                                    // warna
+                                    $color = '#10b981';
+
+                                    $label = match($key) {
+                                        'Autonomy' => 'Auto',
+                                        'Environmental_Mastery' => 'Env',
+                                        'Personal_Growth' => 'Growth',
+                                        'Positive_Relations' => 'Relation',
+                                        'Purpose_in_Life' => 'Purpose',
+                                        'Self_Acceptance' => 'Accept',
+                                        'Self_Efficacy' => 'SelfEff',
+                                        default => $key
+                                    };
+                                @endphp
+
+                                <div class="flex flex-col items-center w-14">
+                                    {{-- VALUE --}}
+                                    <span class="text-xs font-bold">{{ $value }}</span>
+                                    {{-- BAR --}}
+                                    <div 
+                                        style="
+                                            width:50px;
+                                            height: {{ $height }}px;
+                                            background: {{ $color }};
+                                            border-radius: 6px 6px 0 0;
+                                            transition: 0.5s;
+                                        ">
+                                    </div>
+                                    {{-- LABEL --}}
+                                    <span class="text-[10px] mt-3" style="transform: rotate(-45deg); display: inline-block;">
+                                        {{ $label }}
+                                    </span>
                                 </div>
-                                {{-- LABEL --}}
-                                <span class="text-[10px] mt-2 text-center">
-                                    {{ $label }}
-                                </span>
-                            </div>
-                        @endforeach
-                        @endif
+                            @endforeach
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

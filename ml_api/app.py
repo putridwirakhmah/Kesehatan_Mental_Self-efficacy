@@ -171,6 +171,7 @@ def predict():
         se_total = df[se_cols].sum(axis=1).iloc[0]
         wb_total = df[list(subscales.keys())].sum(axis=1).iloc[0]
         se_items = {col: int(df[col].iloc[0]) for col in se_cols}
+        se_avg = round(sum(se_items.values()) / len(se_items), 2)
 
         # =========================
         # ANALISIS SELF-EFFICACY
@@ -203,27 +204,6 @@ def predict():
         min_se = se_label_map.get(min_se, min_se)
 
         # =========================
-        # TOP 5 FITUR PALING BERPENGARUH
-        # =========================
-
-        # Self-Efficacy
-        se_sorted = sorted(
-            {col: int(df[col].iloc[0]) for col in se_cols}.items(),
-            key=lambda x: x[1],
-            reverse=True
-        )
-
-        # Well-Being
-        wb_sorted = sorted(
-            {key: int(df[key].iloc[0]) for key in subscales.keys()}.items(),
-            key=lambda x: x[1],
-            reverse=True
-        )
-
-        # Ambil 3 SE + 2 WB
-        top_features = dict(se_sorted[:3] + wb_sorted[:2])
-
-        # =========================
         # FEATURE
         # =========================
         X = df[feature_cols]
@@ -242,7 +222,7 @@ def predict():
         # =========================
         if label == "high_well_being":
             explanation = (
-                f"Berdasarkan jawaban Anda, Anda memiliki kondisi psychological well-being yang baik "
+                f"Berdasarkan jawaban Anda, Anda memiliki kondisi kesehatan mental yang baik dilihat dari aspek well-being (Kesejahteraan Psikologis) "
                 f"dengan skor total {wb_total}. "
 
                 # WELL BEING
@@ -250,13 +230,14 @@ def predict():
                 f"sedangkan aspek yang masih bisa ditingkatkan adalah {min_feature} dengan skor {min_score}. "
 
                 # SELF EFFICACY
-                f"Dari sisi self-efficacy, Anda paling percaya diri dalam {max_se} (skor {max_se_score}), "
-                f"namun masih perlu meningkatkan {min_se} (skor {min_se_score})."
+                f"Dari sisi self-efficacy, Anda memiliki rata-rata skor sebesar {se_avg}. "
+                f"Anda paling percaya diri dalam {max_se}, "
+                f"namun masih perlu meningkatkan {min_se} untuk hasil yang lebih optimal."
             )
 
         else:
             explanation = (
-                f"Berdasarkan jawaban Anda, Anda berada dalam kategori low well-being "
+                f"Berdasarkan jawaban Anda, Anda memiliki kondisi kesehatan mental yang kurang baik dilihat dari aspek well-being (Kesejahteraan Psikologis) "
                 f"dengan skor total {wb_total}. "
 
                 # WELL BEING
@@ -264,8 +245,9 @@ def predict():
                 f"sementara kekuatan Anda terdapat pada {max_feature} dengan skor {max_score}. "
 
                 # SELF EFFICACY
-                f"Dari sisi self-efficacy, Anda cukup baik dalam {max_se} (skor {max_se_score}), "
-                f"namun masih perlu meningkatkan {min_se} (skor {min_se_score}) untuk hasil yang lebih optimal."
+                f"Dari sisi self-efficacy, Anda memiliki rata-rata skor sebesar {se_avg}. "
+                f"Anda cukup baik dalam {max_se}, "
+                f"namun masih perlu meningkatkan {min_se} untuk mencapai kondisi yang lebih optimal."
             )
 
         # =========================
@@ -283,13 +265,13 @@ def predict():
             "prediction": label,
             "explanation": explanation,
             "confidence": confidence,
-            "top_features": top_features,
 
             "scores": {
                 "self_efficacy": {
                     "total": int(se_total),
                     "max": 40,
                     "percentage": round((se_total / 40) * 100, 2),
+                    "average": se_avg,
                     "items": se_items
                 },
                 "well_being": {

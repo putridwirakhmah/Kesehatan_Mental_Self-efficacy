@@ -124,9 +124,14 @@ class QuizController extends Controller
                 if ($predictionResult['success']) {
                     $predictionData = $predictionResult['data'];
                     $aiPrediction = $predictionData['prediction'] ?? null;
-
-                    if ($aiPrediction) {
-                        $category = $aiPrediction; 
+                    
+                    $categoryMap = [
+                        'high_well_being' => 'Kesehatan Mental Normal',
+                        'low_well_being' => 'Kesehatan Mental Terganggu',
+                    ];
+                    
+                    if ($aiPrediction && isset($categoryMap[$aiPrediction])) {
+                        $category = $categoryMap[$aiPrediction];
                     }
 
                     $feedback = $predictionData['explanation'] ?? $feedback;
