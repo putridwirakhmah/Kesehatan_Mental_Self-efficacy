@@ -74,9 +74,7 @@ kuisioner-mentalhealth/
 
 ### Step 1: Clone Repository
 
-```bash
-cd D:\Skripsi\project\kuisioner-mentalhealth
-```
+buka folder project kesehatan mental self-efficacy
 
 ### Step 2: Install Dependencies
 
@@ -168,9 +166,8 @@ FLASK_API_URL=http://127.0.0.1:5000
 ### Starting Flask API
 
 Before using the application, start the Flask API:
-
+buka folder ml_api yang ada didalam folder kesehatan mental self-efficacy
 ```bash
-cd D:\Skripsi\project\backend
 python app.py
 ```
 
@@ -521,7 +518,7 @@ FLASK_API_URL=             # Flask API endpoint
 ## Credits
 
 - **Developer**: [Your Name]
-- **Project**: Skripsi Sistem Prediksi Kesehatan Mental
+- **Project**: Skripsi Sistem Prediksi Kesehatan Mental Berdasarkan Self-efficacy dan Well-being
 - **Institution**: [Your University]
 - **Year**: 2026
 
